@@ -9,7 +9,7 @@ class Program
         // run todays method
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
-        Day1(true);
+        Day2(true);
         stopwatch.Stop();
         Console.WriteLine("-----------------------------------\n" +
                           "Runtime: " + stopwatch.Elapsed);
@@ -44,6 +44,56 @@ class Program
                 similarity += i * second.Count(e => e == i);
             }
             Console.WriteLine(similarity);
+        }
+    }
+
+    static void Day2(bool part2)
+    {
+        var input = ReadInput(2);
+        int safeLines = 0;
+        foreach (var line in input)
+        {
+            var numbers = line.Split(" ").Select(int.Parse).ToList();
+            if (IsSafeLine(numbers))
+                safeLines++;
+            else if (part2)
+            {
+                for (int i = 0; i < numbers.Count; i++)
+                {
+                    List<int> temp = new List<int>();
+                    temp.AddRange(numbers.Take(i));
+                    temp.AddRange(numbers[(i+1)..]);
+                    if (IsSafeLine(temp))
+                    {
+                        safeLines++;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        Console.WriteLine(safeLines);
+
+        bool IsSafeLine(List<int> numbers)
+        {
+            bool increasing = true;
+            bool decreasing = true;
+            for (int i = 1; i < numbers.Count; i++)
+            {
+                var last = numbers[i - 1];
+                var current = numbers[i];
+                if (current >= last || last - current > 3)
+                {
+                    decreasing = false;
+                }
+
+                if (last >= current || current - last > 3)
+                {
+                    increasing = false;
+                }
+            }
+
+            return increasing || decreasing;
         }
     }
 }
