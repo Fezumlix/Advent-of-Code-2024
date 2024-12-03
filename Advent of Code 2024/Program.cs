@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Advent_of_Code_2024;
 
@@ -9,7 +11,7 @@ class Program
         // run todays method
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
-        Day2(true);
+        Day3(true);
         stopwatch.Stop();
         Console.WriteLine("-----------------------------------\n" +
                           "Runtime: " + stopwatch.Elapsed);
@@ -95,5 +97,31 @@ class Program
 
             return increasing || decreasing;
         }
+    }
+
+    static void Day3(bool part2)
+    {
+        var input = ReadInput(3);
+        var fullText = input.Aggregate("", (current, s) => current + (s + Environment.NewLine));
+        var regex = new Regex(@"mul\([0-9]{1,3},[0-9]{1,3}\)");
+        
+        if (part2)
+        {
+            var doString = "";
+            var splittedDonts = fullText.Split("don't()");
+            doString += splittedDonts[0];
+            foreach (var dontString in splittedDonts[1..])
+            {
+                doString += dontString.Split("do()")[1..].Aggregate("", (current, s) => current + s);
+            }
+            fullText = doString;
+        }
+        
+        var matches = regex.Matches(fullText);
+
+        int sum = matches.ToList().Select(s =>
+            int.Parse(s.Value[4..].Split(",")[0]) * int.Parse(s.Value[4..].Split(",")[1][..^1])).Sum();
+
+        Console.WriteLine(sum);
     }
 }
