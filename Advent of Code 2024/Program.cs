@@ -11,7 +11,7 @@ class Program
         // run todays method
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
-        Day3(true);
+        Day4(true);
         stopwatch.Stop();
         Console.WriteLine("-----------------------------------\n" +
                           "Runtime: " + stopwatch.Elapsed);
@@ -123,5 +123,98 @@ class Program
             int.Parse(s.Value[4..].Split(",")[0]) * int.Parse(s.Value[4..].Split(",")[1][..^1])).Sum();
 
         Console.WriteLine(sum);
+    }
+
+    static void Day4(bool part2)
+    {
+        var input = ReadInput(4);
+        var grid = input.Select(i => i.ToCharArray()).ToArray();
+        int occurences = 0;
+        for (int x = 0; x < grid.Length; x++)
+        {
+            for (int y = 0; y < grid[x].Length; y++)
+            {
+                if (!part2) {
+                    if (grid[x][y] == 'X')
+                    {
+                        Vector2Int dir = new Vector2Int();
+                        for (int i = 0; i < 8; i++)
+                        {
+                            dir = i switch
+                            {
+                                0 => new Vector2Int(1, 0),
+                                1 => new Vector2Int(1, -1),
+                                2 => new Vector2Int(0, -1),
+                                3 => new Vector2Int(-1, -1),
+                                4 => new Vector2Int(-1, 0),
+                                5 => new Vector2Int(-1, 1),
+                                6 => new Vector2Int(0, 1),
+                                7 => new Vector2Int(1, 1),
+                            };
+                            try
+                            {
+                                if (grid[x + dir.X][y + dir.Y] == 'M' &&
+                                    grid[x + dir.X * 2][y + dir.Y * 2] == 'A' &&
+                                    grid[x + dir.X * 3][y + dir.Y * 3] == 'S')
+                                {
+                                    occurences++;
+                                }
+                            }
+                            catch (IndexOutOfRangeException)
+                            {
+                            }
+                        }
+                    }
+                }
+
+                else {
+                    if (grid[x][y] == 'A')
+                    {
+                        try
+                        {
+                            if ((grid[x + 1][y + 1] == 'M' &&
+                                 grid[x + 1][y - 1] == 'M' &&
+                                 grid[x - 1][y - 1] == 'S' &&
+                                 grid[x - 1][y + 1] == 'S') ||
+                                (grid[x + 1][y + 1] == 'M' &&
+                                 grid[x + 1][y - 1] == 'S' &&
+                                 grid[x - 1][y - 1] == 'S' &&
+                                 grid[x - 1][y + 1] == 'M') ||
+                                (grid[x + 1][y + 1] == 'S' &&
+                                 grid[x + 1][y - 1] == 'S' &&
+                                 grid[x - 1][y - 1] == 'M' &&
+                                 grid[x - 1][y + 1] == 'M') ||
+                                (grid[x + 1][y + 1] == 'S' &&
+                                 grid[x + 1][y - 1] == 'M' &&
+                                 grid[x - 1][y - 1] == 'M' &&
+                                 grid[x - 1][y + 1] == 'S'))
+                            {
+                                occurences++;
+                            }
+                        }
+                        catch (IndexOutOfRangeException) { }
+                    }
+                }
+            }
+        }
+        Console.WriteLine(occurences);
+    }
+}
+
+public class Vector2Int
+{
+    public int X { get; set; }
+    public int Y { get; set; }
+
+    public Vector2Int(int x, int y)
+    {
+        X = x;
+        Y = y;
+    }
+
+    public Vector2Int()
+    {
+        X = 0;
+        Y = 0;
     }
 }
